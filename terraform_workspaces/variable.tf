@@ -6,5 +6,11 @@ variable "ami" {
 
 variable "instance_type" {
     description = "value for the instance-type of the AWS instance to be created"
-    type = string
+    type = map(string)
+
+    default = {
+      "dev" = "t2.micro"
+      "stage" = "t2.medium"
+      "prod" = "t2.xlarge"
+    }
 }
