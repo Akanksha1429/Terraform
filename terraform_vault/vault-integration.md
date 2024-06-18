@@ -16,7 +16,7 @@ Here are the detailed steps for each of these steps:
 
 ### Install gpg
 
-``` sudo apt update && sudo apt install gpg
+``` sudo apt update && sudo apt install gpg ```
 
 ### Download the signing key to a new keyring
 
