@@ -1,4 +1,4 @@
-### Vault Integration
+# Vault Integration
 Here are the detailed steps for each of these steps:
 
 ## 1. Create an AWS EC2 instance with Ubuntu
@@ -14,25 +14,25 @@ Here are the detailed steps for each of these steps:
 
 - To install Vault on the EC2 instance, following are the steps:
 
-# Install gpg
+### Install gpg
 
 sudo apt update && sudo apt install gpg
 
-# Download the signing key to a new keyring
+### Download the signing key to a new keyring
 
 wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
 
-# Verify the key's fingerprint
+### Verify the key's fingerprint
 
 gpg --no-default-keyring --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg --fingerprint
 
-# Add the HashiCorp repo
+### Add the HashiCorp repo
 
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
 
 sudo apt update
 
-# Finally, Install Vault
+### Finally, Install Vault
 
 sudo apt install vault
 
@@ -46,11 +46,11 @@ vault server -dev -dev-listen-address="0.0.0.0:8200"
 
 Here are the detailed steps to enable and configure AppRole authentication in HashiCorp Vault:
 
-# a. Enable AppRole Authentication:
+### a. Enable AppRole Authentication:
 
 To enable the AppRole authentication method in Vault, you need to use the Vault CLI or the Vault HTTP API.
 
-# Using Vault CLI:
+### Using Vault CLI:
 
 Run the following command to enable the AppRole authentication method:
 
@@ -58,7 +58,7 @@ vault auth enable approle
 
 This command tells Vault to enable the AppRole authentication method.
 
-# b. Create an AppRole:
+### b. Create an AppRole:
 We need to create policy first,
 
 vault policy write terraform - <<EOF
@@ -74,7 +74,6 @@ path "kv/data/*" {
   capabilities = ["create", "read", "update", "delete", "list"]
 }
 
-
 path "secret/data/*" {
   capabilities = ["create", "read", "update", "delete", "list"]
 }
@@ -86,7 +85,7 @@ EOF
 
 Now need to create an AppRole with appropriate policies and configure its authentication settings. Here are the steps to create an AppRole:
 
-# I. Create the AppRole:
+### I. Create the AppRole:
 
 vault write auth/approle/role/terraform \
     secret_id_ttl=10m \
@@ -96,18 +95,18 @@ vault write auth/approle/role/terraform \
     secret_id_num_uses=40 \
     token_policies=terraform
 
-# c. Generate Role ID and Secret ID:
+### c. Generate Role ID and Secret ID:
 
 After creating the AppRole, need to generate a Role ID and Secret ID pair. The Role ID is a static identifier, while the Secret ID is a dynamic credential.
 
-# I. Generate Role ID:
+### I. Generate Role ID:
 
 You can retrieve the Role ID using the Vault CLI:
 
 vault read auth/approle/role/my-approle/role-id
 Save the Role ID for use in your Terraform configuration.
 
-# II. Generate Secret ID:
+### II. Generate Secret ID:
 
 To generate a Secret ID, you can use the following command:
 
