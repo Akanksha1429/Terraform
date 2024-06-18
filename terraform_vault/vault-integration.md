@@ -16,31 +16,31 @@ Here are the detailed steps for each of these steps:
 
 ### Install gpg
 
-``` sudo apt update && sudo apt install gpg ```
+```   sudo apt update && sudo apt install gpg   ```
 
 ### Download the signing key to a new keyring
 
-wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+```  wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg  ```
 
 ### Verify the key's fingerprint
 
-gpg --no-default-keyring --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg --fingerprint
+```  gpg --no-default-keyring --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg --fingerprint  ```
 
 ### Add the HashiCorp repo
 
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+```  echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list  ```
 
-sudo apt update
+```  sudo apt update  ```
 
 ### Finally, Install Vault
 
-sudo apt install vault
+```  sudo apt install vault  ```
 
 ## 3. Start Vault.
 
 To start Vault, you can use the following command:
 
-vault server -dev -dev-listen-address="0.0.0.0:8200"
+```  vault server -dev -dev-listen-address="0.0.0.0:8200"  ```
 
 ## 4. Configure Terraform to read the secret from Vault.
 
@@ -54,14 +54,14 @@ To enable the AppRole authentication method in Vault, you need to use the Vault 
 
 Run the following command to enable the AppRole authentication method:
 
-vault auth enable approle
+```  vault auth enable approle  ```
 
 This command tells Vault to enable the AppRole authentication method.
 
 ### b. Create an AppRole:
 We need to create policy first,
 
-vault policy write terraform - <<EOF
+``` vault policy write terraform - <<EOF
 path "*" {
   capabilities = ["list", "read"]
 }
@@ -81,12 +81,14 @@ path "secret/data/*" {
 path "auth/token/create" {
 capabilities = ["create", "read", "update", "list"]
 }
-EOF
+EOF 
+```
 
 Now need to create an AppRole with appropriate policies and configure its authentication settings. Here are the steps to create an AppRole:
 
 ### I. Create the AppRole:
 
+```
 vault write auth/approle/role/terraform \
     secret_id_ttl=10m \
     token_num_uses=10 \
@@ -94,6 +96,7 @@ vault write auth/approle/role/terraform \
     token_max_ttl=30m \
     secret_id_num_uses=40 \
     token_policies=terraform
+```
 
 ### c. Generate Role ID and Secret ID:
 
@@ -103,13 +106,14 @@ After creating the AppRole, need to generate a Role ID and Secret ID pair. The R
 
 You can retrieve the Role ID using the Vault CLI:
 
-vault read auth/approle/role/my-approle/role-id
-Save the Role ID for use in your Terraform configuration.
+``` vault read auth/approle/role/my-approle/role-id ```
+
+Save the Role ID for use in Terraform configuration.
 
 ### II. Generate Secret ID:
 
 To generate a Secret ID, you can use the following command:
 
-vault write -f auth/approle/role/my-approle/secret-id
+```  vault write -f auth/approle/role/my-approle/secret-id  ```
 
 This command generates a Secret ID and provides it in the response. Save the Secret ID securely, as it will be used for Terraform authentication.
